@@ -16,19 +16,12 @@ ChartJS.register(
   PointElement
 );
 
-export default function RiskChart() {
-  const [riskData, setRiskData] = useState([0.02, 0.04, 0.06]);
+export default function RiskChart({ riskScore }) {
+  const [riskData, setRiskData] = useState([0]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRiskData((prev) => [
-        ...prev.slice(1),
-        Math.min(prev[prev.length - 1] + Math.random() * 0.02, 1),
-      ]);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
+    setRiskData(prev => [...prev.slice(-10), riskScore]);
+  }, [riskScore]);
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -38,7 +31,7 @@ export default function RiskChart() {
 
       <Line
         data={{
-          labels: ["T1", "T2", "T3"],
+          labels: riskData.map((_, i) => `T${i + 1}`),
           datasets: [
             {
               label: "Risk Level",
@@ -48,6 +41,7 @@ export default function RiskChart() {
           ],
         }}
         options={{
+          animation: false,
           scales: {
             y: {
               min: 0,
